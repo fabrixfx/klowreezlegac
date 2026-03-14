@@ -227,13 +227,13 @@
             const code = document.getElementById('codeInp').value.trim();
             if (!code) return;
 
-            status.innerText = "Checking...";
+            status.innerText = "Проверка ключа...";
             const codeRef = ref(db, 'active_codes/' + code);
 
             try {
                 const snap = await get(codeRef);
                 if (snap.exists()) {
-                    status.innerText = "Success";
+                    status.innerText = "Успешно";
                     status.style.color = "#444";
                     localStorage.setItem('isAuthorized', 'true');
 
@@ -242,7 +242,7 @@
                     loginSec.style.opacity = "0";
                     setTimeout(showMainInstant, 100);
                 } else {
-                    status.innerText = "Access denied";
+                    status.innerText = "Ключ неверный";
                     status.style.color = "#aa2222";
                 }
             } catch (err) {
