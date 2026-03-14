@@ -3,86 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Приватный доступ</title>
+    <title>Klowreez System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 2.5rem; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); text-align: center; width: 100%; max-width: 400px; border: 1px solid #334155; }
-        h1 { margin-bottom: 0.5rem; font-size: 1.5rem; color: #38bdf8; }
-        p { color: #94a3b8; margin-bottom: 2rem; font-size: 0.9rem; }
-        input { width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; background: #0f172a; color: white; font-size: 1.1rem; text-align: center; margin-bottom: 1rem; box-sizing: border-box; outline: none; }
-        input:focus { border-color: #38bdf8; }
-        button { width: 100%; padding: 0.75rem; background: #0ea5e9; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #0284c7; }
-        #msg { margin-top: 1rem; font-size: 0.85rem; min-height: 1.2rem; }
+        :root {
+            --bg: #000000;
+            --accent: #ffffff;
+            --glass: rgba(255, 255, 255, 0.02);
+            --blur: blur(30px);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 380px;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 32px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        #login-page { display: none; animation: fadeIn 1s ease; }
+        h1 { font-weight: 600; letter-spacing: -1px; margin: 0 0 10px 0; font-size: 24px; }
+        p { font-weight: 300; color: #555; font-size: 14px; margin-bottom: 30px; }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+            text-align: center;
+        }
+        input:focus { border-color: rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 18px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { transform: scale(0.98); opacity: 0.9; }
+
+        #status { margin-top: 20px; font-size: 11px; color: #444; letter-spacing: 1px; text-transform: uppercase; }
+
+        #main-page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+            width: 100%;
+            padding: 40px 0;
+            box-sizing: border-box;
+        }
+
+        /* ИСПРАВЛЕННАЯ НАВИГАЦИЯ */
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            transition: 0.3s;
+            cursor: pointer; /* Пальчик при наведении */
+        }
+        nav a:hover { opacity: 1; }
+
+        .logo-box {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-box img {
+            max-width: 200px;
+            height: auto;
+            animation: logoAppear 2.5s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes logoAppear {
+            from { opacity: 0; filter: blur(20px); transform: scale(0.9); }
+            to { opacity: 1; filter: blur(0); transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>Доступ по коду</h1>
-    <p>Получите одноразовый код в Telegram-боте</p>
-    <input type="text" id="codeInput" placeholder="Введите ваш код">
-    <button id="btnEnter">Войти в систему</button>
-    <div id="msg"></div>
-</div>
+    <div class="bg-glow"></div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+    <div id="login-page" class="container">
+        <h1>Verify</h1>
+        <p>Enter your access key</p>
+        <input type="text" id="codeInp" placeholder="KEY">
+        <button id="checkBtn">Access System</button>
+        <div id="status">Ready</div>
+    </div>
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCWlH7XpQPu6jQhss5VUvyTfCtQvr6fA5o",
-        authDomain: "klowreez.firebaseapp.com",
-        databaseURL: "https://klowreez-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "klowreez",
-        storageBucket: "klowreez.firebasestorage.app",
-        messagingSenderId: "162324945366",
-        appId: "1:162324945366:web:d1bae9d7e60a53930eac77",
-        measurementId: "G-H3GSWPQ7WH"
-    };
+    <div id="main-page">
+        <nav><a onclick="location.reload()">Главная</a></nav>
+        <div class="logo-box">
+            <img src="logo.png" alt="" onerror="this.style.display='none'">
+        </div>
+        <div style="height: 20px;"></div>
+    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
-    const input = document.getElementById('codeInput');
-    const btn = document.getElementById('btnEnter');
-    const msg = document.getElementById('msg');
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWlH7XpQPu6jQhss5VUvyTfCtQvr6fA5o",
+            authDomain: "klowreez.firebaseapp.com",
+            databaseURL: "https://klowreez-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "klowreez",
+            storageBucket: "klowreez.firebasestorage.app",
+            messagingSenderId: "162324945366",
+            appId: "1:162324945366:web:d1bae9d7e60a53930eac77"
+        };
 
-    btn.addEventListener('click', async () => {
-        const code = input.value.trim();
-        if (!code) {
-            showMsg("Пожалуйста, введите код", "#fbbf24");
-            return;
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const loginSec = document.getElementById('login-page');
+        const mainSec = document.getElementById('main-page');
+        const status = document.getElementById('status');
+
+        if (localStorage.getItem('isAuthorized') === 'true') {
+            mainSec.style.display = 'flex';
+        } else {
+            loginSec.style.display = 'block';
         }
 
-        showMsg("Проверка...", "#94a3b8");
+        document.getElementById('checkBtn').onclick = async () => {
+            const code = document.getElementById('codeInp').value.trim();
+            if (!code) return;
 
-        const codeRef = ref(db, 'active_codes/' + code);
-        
-        try {
-            const snapshot = await get(codeRef);
-            if (snapshot.exists()) {
-                showMsg("Доступ разрешен! Перенаправляем...", "#4ade80");
-                await remove(codeRef); // Удаляем, чтобы код нельзя было использовать дважды
-                
-                setTimeout(() => {
-                    // Куда редиректим после входа
-                    window.location.href = "welcome.html"; 
-                }, 1500);
-            } else {
-                showMsg("Неверный или просроченный код", "#f87171");
+            status.innerText = "Connecting...";
+            const codeRef = ref(db, 'active_codes/' + code);
+
+            try {
+                const snap = await get(codeRef);
+                if (snap.exists()) {
+                    status.innerText = "Success";
+                    localStorage.setItem('isAuthorized', 'true');
+                    loginSec.style.transition = "0.5s";
+                    loginSec.style.opacity = "0";
+                    setTimeout(() => {
+                        loginSec.style.display = "none";
+                        mainSec.style.display = "flex";
+                    }, 500);
+                } else {
+                    status.innerText = "Invalid Key";
+                    status.style.color = "#ff4444";
+                }
+            } catch (err) {
+                console.error(err);
+                status.innerText = "Error: Check Console";
             }
-        } catch (e) {
-            showMsg("Ошибка базы данных. Проверьте Rules!", "#f87171");
-            console.error(e);
-        }
-    });
-
-    function showMsg(text, color) {
-        msg.innerText = text;
-        msg.style.color = color;
-    }
-</script>
-
+        };
+    </script>
 </body>
 </html>
