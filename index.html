@@ -2,254 +2,29 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Klowreez</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klowreez Project</title>
     <style>
-        :root {
-            --bg: #000000;
-            --accent: #ffffff;
-            /* Ультра-тонкое стекло для входа */
-            --glass: rgba(255, 255, 255, 0.015);
-            --blur: blur(20px);
-        }
-
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--accent);
+        body {
+            margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            /* Убираем выделение текста на мобильных */
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-
-        /* --- СТРАНИЦА ВХОДА (LOGIN) --- */
-        #login-page {
-            display: none;
-            width: 90%; /* Адаптивная ширина */
-            max-width: 360px;
-            padding: 40px;
-            background: var(--glass);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 24px;
-            text-align: center;
-            box-sizing: border-box;
-            /* Моментальное появление */
-            animation: fadeInQuick 0.2s ease-out;
-        }
-
-        h1 { font-weight: 600; letter-spacing: -1px; margin: 0 0 8px 0; font-size: 24px; }
-        p { font-weight: 300; color: #444; font-size: 14px; margin-bottom: 30px; }
-
-        input {
-            width: 100%;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            text-align: center;
-            transition: border-color 0.2s;
-            -webkit-appearance: none; /* Чистый инпут на iOS */
-        }
-        input:focus { border-color: rgba(255, 255, 255, 0.15); }
-
-        button {
-            width: 100%;
-            margin-top: 16px;
-            padding: 16px;
-            background: #fff;
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        button:hover { opacity: 0.85; }
-        button:active { transform: scale(0.98); } /* Эффект нажатия */
-
-        #status { margin-top: 18px; font-size: 10px; color: #333; letter-spacing: 1.5px; text-transform: uppercase; min-height: 12px; }
-
-        /* --- ГЛАВНАЯ СТРАНИЦА (MAIN) --- */
-        #main-page {
-            display: none;
-            flex-direction: column;
             align-items: center;
             height: 100vh;
-            width: 100%;
-            padding: 0;
-            box-sizing: border-box;
-            opacity: 0;
-            /* Моментальный переход */
-            transition: opacity 0.2s ease-out;
-        }
-
-        /* Навигация (Стерильно чистая) */
-        nav {
-            width: 100%;
-            padding: 30px 0;
-            text-align: center;
-            position: absolute;
-            top: 0;
-            z-index: 10;
-        }
-        nav a {
+            background: #000;
             color: #fff;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 3px;
+            font-family: sans-serif;
+        }
+        h1 {
+            font-size: 5rem;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-transform: uppercase;
-            opacity: 0.3;
-            transition: opacity 0.2s;
-            cursor: pointer;
-        }
-        nav a:hover { opacity: 0.9; }
-
-        /* Контейнер Логотипа (Строго по центру) */
-        .logo-wrapper {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-        }
-        .logo-wrapper img {
-            width: 80%; /* Адаптивная ширина */
-            max-width: 500px; /* КАРТИНКА СТАЛА БОЛЬШЕ */
-            height: auto;
-            /* Чистое появление без киберпанк-блюра */
-            animation: logoFadeIn 0.5s ease-out;
-            pointer-events: none; /* Игнорировать клики по лого */
-        }
-
-        /* --- АНИМАЦИИ (БЫСТРЫЕ) --- */
-        @keyframes fadeInQuick { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes logoFadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        /* --- ОПТИМИЗАЦИЯ ПОД ТЕЛЕФОНЫ (MOBILE) --- */
-        @media (max-width: 600px) {
-            #login-page {
-                width: 85%;
-                padding: 30px 25px;
-                border-radius: 20px;
-            }
-            h1 { font-size: 20px; letter-spacing: -0.5px; }
-            p { font-size: 13px; margin-bottom: 25px; }
-            input, button { padding: 14px; font-size: 14px; border-radius: 10px; }
-
-            nav { padding: 20px 0; }
-            nav a { font-size: 10px; letter-spacing: 2px; }
-
-            .logo-wrapper img {
-                width: 70%; /* Чуть меньше на узких экранах */
-                max-width: 280px; /* Чтобы не упиралась в края */
-            }
         }
     </style>
 </head>
 <body>
-
-    <div id="login-page">
-        <h1>Verify</h1>
-        <p>Введите ключ</p>
-        <input type="text" id="codeInp" placeholder="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        <button id="checkBtn">Продолжить</button>
-        <div id="status"></div>
-    </div>
-
-    <div id="main-page">
-        <nav>
-            <a onclick="location.reload()">Главная</a>
-        </nav>
-
-        <div class="logo-wrapper">
-            <img src="logo.png" alt="" onerror="this.style.display='none'">
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-
-        // ТВОИ КОНФИГИ (Оставь как есть)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCWlH7XpQPu6jQhss5VUvyTfCtQvr6fA5o",
-            authDomain: "klowreez.firebaseapp.com",
-            databaseURL: "https://klowreez-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "klowreez",
-            storageBucket: "klowreez.firebasestorage.app",
-            messagingSenderId: "162324945366",
-            appId: "1:162324945366:web:d1bae9d7e60a53930eac77"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const loginSec = document.getElementById('login-page');
-        const mainSec = document.getElementById('main-page');
-        const status = document.getElementById('status');
-
-        // Моментальный старт
-        window.onload = () => {
-            if (localStorage.getItem('isAuthorized') === 'true') {
-                showMainInstant();
-            } else {
-                loginSec.style.display = 'block';
-            }
-        };
-
-        function showMainInstant() {
-            loginSec.style.display = 'none';
-            mainSec.style.display = 'flex';
-            // Небольшая задержка, чтобы flexbox успел отработать
-            setTimeout(() => { mainSec.style.opacity = '1'; }, 50);
-        }
-
-        document.getElementById('checkBtn').onclick = async () => {
-            const code = document.getElementById('codeInp').value.trim();
-            if (!code) return;
-
-            status.innerText = "Проверка ключа...";
-            const codeRef = ref(db, 'active_codes/' + code);
-
-            try {
-                const snap = await get(codeRef);
-                if (snap.exists()) {
-                    status.innerText = "Успешно";
-                    status.style.color = "#444";
-                    localStorage.setItem('isAuthorized', 'true');
-
-                    // Супер-быстрый переход
-                    loginSec.style.transition = "opacity 0.1s ease";
-                    loginSec.style.opacity = "0";
-                    setTimeout(showMainInstant, 100);
-                } else {
-                    status.innerText = "Ключ неверный";
-                    status.style.color = "#aa2222";
-                }
-            } catch (err) {
-                console.error(err);
-                status.innerText = "Error";
-            }
-        };
-    </script>
+    <h1>ПРИВЕТ</h1>
 </body>
 </html>
