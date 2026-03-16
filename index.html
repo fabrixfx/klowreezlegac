@@ -2,14 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aero Snow Static</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Переходник</title>
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Убирает синюю рамку при нажатии на мобилках */
         }
 
         body {
@@ -21,7 +22,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'Unbounded', sans-serif;
-            -webkit-font-smoothing: antialiased; /* Улучшенное сглаживание шрифта */
+            -webkit-font-smoothing: antialiased;
         }
 
         #snowCanvas {
@@ -34,43 +35,62 @@
             pointer-events: none;
         }
 
-        /* Стек кнопок */
         .button-stack {
             position: relative;
             z-index: 10;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px; /* Чуть меньше зазор на мобилках */
             width: 90%;
             max-width: 650px;
         }
 
-        /* Статичный Aero стиль */
         .aero-btn {
             text-decoration: none;
             color: #ffffff;
             background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(30px) saturate(160%);
-            -webkit-backdrop-filter: blur(30px) saturate(160%);
+            backdrop-filter: blur(20px) saturate(160%); /* Снизил блюр для производительности мобилок */
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 35px 40px;
-            border-radius: 24px;
-            font-size: 15px;
+            padding: 30px 25px; /* Уменьшил паддинги */
+            border-radius: 20px;
+            font-size: 14px; /* Базовый размер шрифта */
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
             letter-spacing: 0.5px;
-            line-height: 1.5;
-            /* Плавный переход только для цвета и тени */
+            line-height: 1.4;
             transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        /* Эффект наведения: только подсветка */
+        /* Адаптация под маленькие экраны */
+        @media (max-width: 480px) {
+            .aero-btn {
+                padding: 25px 20px;
+                font-size: 12px; /* Меньше текст, чтобы не раздувало кнопку */
+                border-radius: 18px;
+            }
+            .button-stack {
+                gap: 12px;
+            }
+        }
+
+        /* Адаптация под планшеты/ПК */
+        @media (min-width: 768px) {
+            .aero-btn {
+                padding: 35px 40px;
+                font-size: 15px;
+            }
+            .button-stack {
+                gap: 20px;
+            }
+        }
+
         .aero-btn:hover {
-            background: rgba(255, 255, 255, 0.07); /* Чуть светлее фон */
-            border-color: rgba(255, 255, 255, 0.5); /* Ярче обводка */
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); /* Мягкое свечение */
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
@@ -100,12 +120,16 @@
             canvas.width = width;
             canvas.height = height;
 
+            // Оптимизация количества снежинок: на мобилках их будет меньше
+            const isMobile = width < 768;
+            const flakeCount = isMobile ? 80 : 180;
+
             flakes = [];
-            for (let i = 0; i < 180; i++) {
+            for (let i = 0; i < flakeCount; i++) {
                 flakes.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    r: Math.random() * 2.5 + 0.5, 
+                    r: Math.random() * (isMobile ? 1.5 : 2.5) + 0.5, 
                     v: Math.random() * 0.7 + 0.2,
                     o: Math.random() * 0.7
                 });
@@ -135,7 +159,13 @@
             }
         }
 
-        window.addEventListener('resize', init);
+        // Ограничение частоты перерисовки при ресайзе (debounce)
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(init, 200);
+        });
+
         init();
 
         function animate() {
