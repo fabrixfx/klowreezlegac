@@ -3,28 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Klowreez Project</title>
+    <title>Aero Snow Static</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: #000;
-            color: #fff;
-            font-family: sans-serif;
+            font-family: 'Unbounded', sans-serif;
+            -webkit-font-smoothing: antialiased; /* Улучшенное сглаживание шрифта */
         }
-        h1 {
-            font-size: 5rem;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        #snowCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Стек кнопок */
+        .button-stack {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 90%;
+            max-width: 650px;
+        }
+
+        /* Статичный Aero стиль */
+        .aero-btn {
+            text-decoration: none;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 35px 40px;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 700;
             text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+            /* Плавный переход только для цвета и тени */
+            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Эффект наведения: только подсветка */
+        .aero-btn:hover {
+            background: rgba(255, 255, 255, 0.07); /* Чуть светлее фон */
+            border-color: rgba(255, 255, 255, 0.5); /* Ярче обводка */
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); /* Мягкое свечение */
         }
     </style>
 </head>
 <body>
-    <h1>ПРИВЕТ</h1>
+
+    <canvas id="snowCanvas"></canvas>
+
+    <div class="button-stack">
+        <a href="https://t.me/+X4BK9AHHYINiZTFi" class="aero-btn" target="_blank">
+            Перейти в мой высокоинтеллектуальный телеграм канал
+        </a>
+
+        <a href="https://steamcommunity.com/id/e2wav" class="aero-btn" target="_blank">
+            Мой стим профиль
+        </a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height, flakes;
+
+        function init() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            flakes = [];
+            for (let i = 0; i < 180; i++) {
+                flakes.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 2.5 + 0.5, 
+                    v: Math.random() * 0.7 + 0.2,
+                    o: Math.random() * 0.7
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < flakes.length; i++) {
+                let f = flakes[i];
+                ctx.fillStyle = `rgba(255, 255, 255, ${f.o})`;
+                ctx.beginPath();
+                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+                ctx.fill();
+            }
+            update();
+        }
+
+        function update() {
+            for (let i = 0; i < flakes.length; i++) {
+                let f = flakes[i];
+                f.y += f.v;
+                if (f.y > height) {
+                    flakes[i].y = -10;
+                    flakes[i].x = Math.random() * width;
+                }
+            }
+        }
+
+        window.addEventListener('resize', init);
+        init();
+
+        function animate() {
+            draw();
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
