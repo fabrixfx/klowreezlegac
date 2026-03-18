@@ -1,178 +1,202 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Переходник</title>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e2.cc</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Убирает синюю рамку при нажатии на мобилках */
+        :root {
+            --bg: #0b0b0c;
+            --fg: #fff;
+            --muted: rgba(255, 255, 255, .72);
+            --mx: 50%;
+            --my: 50%;
+            --radius: 240px;
+            --falloff: 62%;
         }
+
+        * { box-sizing: border-box }
 
         body {
-            background-color: #000000;
+            margin: 0;
             height: 100vh;
-            width: 100%;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Unbounded', sans-serif;
-            -webkit-font-smoothing: antialiased;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Inter, system-ui, sans-serif;
+            opacity: 0;
+            animation: pageIn 1.4s ease forwards;
         }
 
-        #snowCanvas {
+        @keyframes pageIn { to { opacity: 1 } }
+
+        .backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            inset: 0;
+            background:
+                radial-gradient(1200px 900px at 50% 40%, rgba(255, 255, 255, .06), transparent 60%),
+                radial-gradient(1600px 1200px at 50% 100%, rgba(0, 0, 0, .65), transparent 55%);
             pointer-events: none;
         }
 
-        .button-stack {
+        .flashlight {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle 70px at var(--mx) var(--my), rgba(255, 255, 255, .45), rgba(255, 255, 255, .25) 40%, transparent 70%),
+                radial-gradient(circle var(--radius) at var(--mx) var(--my), rgba(255, 255, 255, .18), rgba(255, 255, 255, .08) 40%, transparent var(--falloff));
+            mix-blend-mode: screen;
+            filter: blur(.4px);
+            animation: pulse 3.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: .85 } 50% { opacity: 1 } }
+
+        .wrap {
+            height: 100%;
+            display: grid;
+            place-items: center;
             position: relative;
-            z-index: 10;
+            z-index: 1;
+        }
+
+        .stack {
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Чуть меньше зазор на мобилках */
-            width: 90%;
-            max-width: 650px;
-        }
-
-        .aero-btn {
-            text-decoration: none;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(20px) saturate(160%); /* Снизил блюр для производительности мобилок */
-            -webkit-backdrop-filter: blur(20px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 30px 25px; /* Уменьшил паддинги */
-            border-radius: 20px;
-            font-size: 14px; /* Базовый размер шрифта */
-            font-weight: 700;
-            text-transform: uppercase;
+            align-items: center;
+            gap: 24px;
             text-align: center;
-            letter-spacing: 0.5px;
-            line-height: 1.4;
-            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        /* Адаптация под маленькие экраны */
-        @media (max-width: 480px) {
-            .aero-btn {
-                padding: 25px 20px;
-                font-size: 12px; /* Меньше текст, чтобы не раздувало кнопку */
-                border-radius: 18px;
-            }
-            .button-stack {
-                gap: 12px;
-            }
+        /* Запрет выделения и копирования для главного названия */
+        .brand {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            letter-spacing: -.04em;
+            font-size: clamp(80px, 15vw, 180px);
+            
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none; /* Полностью игнорирует клики и наведение */
+            
+            animation: brandIn 1.6s cubic-bezier(.16, .84, .44, 1) forwards, float 6s ease-in-out infinite 2s;
         }
 
-        /* Адаптация под планшеты/ПК */
-        @media (min-width: 768px) {
-            .aero-btn {
-                padding: 35px 40px;
-                font-size: 15px;
-            }
-            .button-stack {
-                gap: 20px;
-            }
+        @keyframes brandIn {
+            from { opacity: 0; transform: scale(.85) translateY(40px); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); text-shadow: 0 0 35px rgba(255, 255, 255, .18); }
         }
 
-        .aero-btn:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        @keyframes float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-12px) } }
+
+        .divider {
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+            animation: dividerIn 1.4s ease forwards 1s;
+        }
+
+        @keyframes dividerIn { to { width: min(400px, 70vw) } }
+
+        .links { display: flex; gap: 16px; justify-content: center; }
+
+        .social {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .2);
+            background: rgba(255, 255, 255, .04);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            transition: all .3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .social:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, .5);
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .tg-ch { animation: btnIn .8s ease forwards 1.5s }
+        .tg-bot { animation: btnIn .8s ease forwards 1.8s }
+
+        @keyframes btnIn { to { opacity: 1; transform: translateY(0) } }
+
+        .label { display: flex; flex-direction: column; text-align: left; line-height: 1.1; }
+        .label small { color: var(--muted); font-size: 11px; }
+
+        .icon { width: 24px; height: 24px; fill: white; }
+
+        .hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(255, 255, 255, .3);
+            letter-spacing: 0.1em;
         }
     </style>
 </head>
 <body>
 
-    <canvas id="snowCanvas"></canvas>
+    <div class="backdrop"></div>
+    <div class="flashlight"></div>
 
-    <div class="button-stack">
-        <a href="https://t.me/+X4BK9AHHYINiZTFi" class="aero-btn" target="_blank">
-            Перейти в мой высокоинтеллектуальный телеграм канал
-        </a>
+    <main class="wrap">
+        <section class="stack">
+            <div class="brand" oncontextmenu="return false;">e2.cc</div>
+            <div class="divider"></div>
 
-        <a href="https://steamcommunity.com/id/e2wav" class="aero-btn" target="_blank">
-            Мой стим профиль
-        </a>
-    </div>
+            <div class="links">
+                <a class="social tg-ch" href="https://t.me/e93_e" target="_blank">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.35-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.5 4.35-1.76 4.84-1.77.11 0 .35.03.5.16.12.1.16.23.18.33.02.11.02.31 0 .49z"/></svg>
+                    <span class="label"><span>Telegram</span><small>Channel</small></span>
+                </a>
+
+                <a class="social tg-bot" href="@e09ubot" target="_blank">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2Zm4.93 7.36-1.64 7.73c-.12.55-.45.69-.91.43l-2.52-1.86-1.21 1.16c-.13.13-.25.25-.51.25l.18-2.57 4.68-4.23c.2-.18-.04-.28-.32-.1l-5.78 3.64-2.49-.78c-.54-.17-.55-.54.11-.8l9.73-3.75c.45-.16.84.11.68.88Z"/></svg>
+                    <span class="label"><span>Telegram</span><small>Bot</small></span>
+                </a>
+            </div>
+        </section>
+    </main>
 
     <script>
-        const canvas = document.getElementById('snowCanvas');
-        const ctx = canvas.getContext('2d');
+        const root = document.documentElement;
+        let tx = innerWidth / 2, ty = innerHeight / 2;
+        let cx = tx, cy = ty;
+        let time = 0;
 
-        let width, height, flakes;
-
-        function init() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-
-            // Оптимизация количества снежинок: на мобилках их будет меньше
-            const isMobile = width < 768;
-            const flakeCount = isMobile ? 80 : 180;
-
-            flakes = [];
-            for (let i = 0; i < flakeCount; i++) {
-                flakes.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    r: Math.random() * (isMobile ? 1.5 : 2.5) + 0.5, 
-                    v: Math.random() * 0.7 + 0.2,
-                    o: Math.random() * 0.7
-                });
-            }
+        function set(x, y) {
+            root.style.setProperty("--mx", x + "px");
+            root.style.setProperty("--my", y + "px");
         }
-
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < flakes.length; i++) {
-                let f = flakes[i];
-                ctx.fillStyle = `rgba(255, 255, 255, ${f.o})`;
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
-                ctx.fill();
-            }
-            update();
-        }
-
-        function update() {
-            for (let i = 0; i < flakes.length; i++) {
-                let f = flakes[i];
-                f.y += f.v;
-                if (f.y > height) {
-                    flakes[i].y = -10;
-                    flakes[i].x = Math.random() * width;
-                }
-            }
-        }
-
-        // Ограничение частоты перерисовки при ресайзе (debounce)
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(init, 200);
-        });
-
-        init();
 
         function animate() {
-            draw();
+            time += 0.015;
+            cx += (tx - cx) * 0.25;
+            cy += (ty - cy) * 0.25;
+            set(cx + Math.sin(time) * 4, cy + Math.cos(time) * 4);
             requestAnimationFrame(animate);
         }
-        animate();
+
+        addEventListener("mousemove", e => { tx = e.clientX; ty = e.clientY }, { passive: true });
+        set(cx, cy); animate();
     </script>
 </body>
 </html>
