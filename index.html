@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>rwkits cs2</title>
     <style>
-        /* Verdana 11px Bold + Pixel Perfect Rendering */
         * {
             margin: 0;
             padding: 0;
@@ -31,7 +30,6 @@
             color: #ddd;
         }
 
-        /* Система уведомлений */
         #notification-container {
             position: fixed;
             top: 15px;
@@ -72,14 +70,12 @@
         .logo { font-size: 62px !important; letter-spacing: -4px; color: #fff; margin-bottom: 25px; }
         .logo span { color: #333; font-size: 62px !important; }
 
-        /* Иконка магазина */
         .shop-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; }
         .shop-pure-btn { background: none; border: none; cursor: pointer; padding: 10px; outline: none; transition: transform 0.1s; }
         .shop-pure-btn:active { transform: scale(0.9); }
         .icon-svg { width: 48px; height: 48px; fill: #666; transition: fill 0.2s; }
         .shop-pure-btn:hover .icon-svg { fill: #fff; }
 
-        /* Тултип */
         .hint {
             position: absolute; bottom: -45px; left: 50%; transform: translateX(-50%) translateY(5px);
             background: #151515; border: 1px solid #303030; padding: 7px 12px; color: #aaa;
@@ -91,7 +87,6 @@
         }
         .shop-wrapper:hover .hint { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
-        /* Модальные окна и Затемнение */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0); display: none; justify-content: center; align-items: center;
@@ -173,7 +168,7 @@
 
     <div class="overlay" id="loginOv">
         <div class="modal">
-            <div class="modal-h"><span>rwkits — login</span><span class="close" onclick="closeModal(loginOv)">✕</span></div>
+            <div class="modal-h"><span>rwkits - login</span><span class="close" onclick="closeModal(loginOv)">✕</span></div>
             <div class="modal-b">
                 <div class="input-group">
                     <label>Username</label>
@@ -196,8 +191,6 @@
         const shopOv = document.getElementById('shopOv');
         const loginOv = document.getElementById('loginOv');
         const notifyBox = document.getElementById('notification-container');
-
-        // Утилита для алертов
         function sendAlert(text) {
             const el = document.createElement('div');
             el.className = 'alert';
@@ -209,25 +202,19 @@
                 setTimeout(() => el.remove(), 300);
             }, 4500);
         }
-
-        // Управление модалками
         function openModal(ov) { ov.style.display = 'flex'; setTimeout(() => ov.classList.add('active'), 10); }
         function closeModal(ov) { ov.classList.remove('active'); setTimeout(() => ov.style.display = 'none', 400); }
 
         document.getElementById('shopBtn').onclick = () => openModal(shopOv);
         document.getElementById('loginBtn').onclick = () => openModal(loginOv);
-
-        // ЖЕСТКАЯ ВАЛИДАЦИЯ ПРИ ВВОДЕ (Блокируем всё кроме латиницы и цифр)
         const filterInput = (el) => {
             el.oninput = () => {
-                el.value = el.value.replace(/[^a-zA-Z0-9-]/g, ''); // Удаляем всё, кроме латиницы, цифр и дефиса
+                el.value = el.value.replace(/[^a-zA-Z0-9-]/g, '');
             };
         };
         filterInput(document.getElementById('userIn'));
         filterInput(document.getElementById('passIn'));
         filterInput(document.getElementById('inviteIn'));
-
-        // Обработка входа
         document.getElementById('signInBtn').onclick = () => {
             const user = document.getElementById('userIn').value;
             const pass = document.getElementById('passIn').value;
@@ -236,24 +223,19 @@
             const latinOnly = /^[a-zA-Z0-9]+$/;
             const inviteRegex = /^RW-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}$/;
 
-            // Проверка логина
             if (user.length < 5) return sendAlert("Error: Username must be at least 5 characters.");
             if (!latinOnly.test(user)) return sendAlert("Error: Username must be Latin characters only.");
 
-            // Проверка пароля
             if (pass.length < 8) return sendAlert("Error: Password must be at least 8 characters.");
             if (!latinOnly.test(pass)) return sendAlert("Error: Password must be Latin characters only.");
 
-            // Проверка инвайта
             if (!inviteRegex.test(invite)) return sendAlert("Error: Invalid format. Use RW-XXXX-XXXX (Latin only).");
 
-            // Имитация серверной ошибки
             setTimeout(() => {
                 sendAlert("CRITICAL: Remote server actively refused connection (0x8004100E)");
             }, 800);
         };
 
-        // Обработка покупки
         document.getElementById('buyBtn').onclick = () => {
             sendAlert("Error: Payment gateway is currently under maintenance.");
         };
